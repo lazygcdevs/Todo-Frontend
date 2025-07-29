@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import TodoItem from "../components/todo-item"
 import type { Todo, CreateTodoRequest, UpdateTodoRequest } from "../types/todo"
 
-const API_BASE = "http://localhost:8080/api/v1"
+const API_BASE = "https://todoapi.spshan.com/api/v1"
 
 // API Client Functions
 async function apiCall(endpoint: string, options: RequestInit = {}) {
