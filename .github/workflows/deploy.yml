@@ -79,10 +79,10 @@ jobs:
           exit 1
         fi
         
-        # Upload the built files to blob storage using storage account key
+        # Upload the built files to blob storage using service principal
         az storage blob upload-batch \
           --account-name $STORAGE_ACCOUNT_NAME \
-          --account-key "${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}" \
+          --auth-mode login \
           --source ./out \
           --destination $CONTAINER_NAME \
           --overwrite
