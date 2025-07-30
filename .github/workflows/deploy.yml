@@ -33,6 +33,14 @@ jobs:
     - name: Build application
       run: npm run build
       
+    - name: Verify build output
+      run: |
+        echo "Checking build output directory..."
+        ls -la
+        echo "Contents of out directory (if it exists):"
+        ls -la out/ || echo "out directory does not exist"
+        echo "Current working directory: $(pwd)"
+      
     - name: Install Azure CLI
       run: |
         curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -60,6 +68,14 @@ jobs:
         
         if [ -z "$CONTAINER_NAME" ]; then
           echo "Error: AZURE_STORAGE_CONTAINER_NAME secret is not set"
+          exit 1
+        fi
+        
+        # Check if out directory exists
+        if [ ! -d "./out" ]; then
+          echo "Error: Build output directory './out' does not exist"
+          echo "Available directories:"
+          ls -la
           exit 1
         fi
         
