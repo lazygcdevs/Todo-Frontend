@@ -79,22 +79,10 @@ jobs:
           exit 1
         fi
         
-        # Upload the built files to blob storage using service principal
+        # Upload the built files to blob storage using storage account key
         az storage blob upload-batch \
           --account-name $STORAGE_ACCOUNT_NAME \
-          --auth-mode login \
+          --account-key "${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}" \
           --source ./out \
           --destination $CONTAINER_NAME \
           --overwrite
-          
-    - name: Configure static website hosting (if needed)
-      run: |
-        STORAGE_ACCOUNT_NAME="${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}"
-        
-        # Enable static website hosting using service principal
-        az storage blob service-properties update \
-          --account-name $STORAGE_ACCOUNT_NAME \
-          --auth-mode login \
-          --static-website \
-          --index-document index.html \
-          --404-document 404.html 
