@@ -48,6 +48,21 @@ jobs:
         STORAGE_ACCOUNT_NAME="${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}"
         CONTAINER_NAME="${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}"
         
+        # Debug: Check if secrets are set
+        echo "Storage Account Name: $STORAGE_ACCOUNT_NAME"
+        echo "Container Name: $CONTAINER_NAME"
+        
+        # Check if secrets are provided
+        if [ -z "$STORAGE_ACCOUNT_NAME" ]; then
+          echo "Error: AZURE_STORAGE_ACCOUNT_NAME secret is not set"
+          exit 1
+        fi
+        
+        if [ -z "$CONTAINER_NAME" ]; then
+          echo "Error: AZURE_STORAGE_CONTAINER_NAME secret is not set"
+          exit 1
+        fi
+        
         # Upload the built files to blob storage using service principal
         az storage blob upload-batch \
           --account-name $STORAGE_ACCOUNT_NAME \
