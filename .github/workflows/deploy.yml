@@ -25,14 +25,7 @@ jobs:
             
     - name: Install dependencies
       run: npm install --legacy-peer-deps
-    
-    - name: build path
-      run: |
-        ls -la
-        ls -la ./
-        ls -la ./dist
-        
-      
+     
     - name: Run linting
       run: npm run lint
       continue-on-error: true
@@ -53,7 +46,7 @@ jobs:
       run: |
         # Get the storage account name from secrets
         STORAGE_ACCOUNT_NAME="${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}"
-        CONTAINER_NAME='$web'
+        CONTAINER_NAME='${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}'
         
         # Debug: Check if secrets are set
         echo "Storage Account Name: $STORAGE_ACCOUNT_NAME"
