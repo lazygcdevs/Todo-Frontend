@@ -46,7 +46,7 @@ jobs:
       run: |
         # Get the storage account name from secrets
         STORAGE_ACCOUNT_NAME="${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}"
-        CONTAINER_NAME="${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}"
+        CONTAINER_NAME="$web"
         
         # Debug: Check if secrets are set
         echo "Storage Account Name: $STORAGE_ACCOUNT_NAME"
