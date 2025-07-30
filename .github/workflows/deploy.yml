@@ -1,0 +1,68 @@
+name: Build and Deploy to Azure Blob Storage
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  NODE_VERSION: '^22'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run linting
+      run: npm run lint
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Install Azure CLI
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+      
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Deploy to Azure Blob Storage
+      run: |
+        # Get the storage account name from secrets
+        STORAGE_ACCOUNT_NAME="${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}"
+        CONTAINER_NAME="${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}"
+        
+        # Upload the built files to blob storage using service principal
+        az storage blob upload-batch \
+          --account-name $STORAGE_ACCOUNT_NAME \
+          --auth-mode login \
+          --source ./out \
+          --destination $CONTAINER_NAME \
+          --overwrite
+          
+    - name: Configure static website hosting (if needed)
+      run: |
+        STORAGE_ACCOUNT_NAME="${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}"
+        
+        # Enable static website hosting using service principal
+        az storage blob service-properties update \
+          --account-name $STORAGE_ACCOUNT_NAME \
+          --auth-mode login \
+          --static-website \
+          --index-document index.html \
+          --404-document 404.html 
